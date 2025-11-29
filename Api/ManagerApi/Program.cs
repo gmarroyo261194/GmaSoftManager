@@ -1,3 +1,8 @@
+using ManagerApi.Data;
+using ManagerApi.Data.Interceptors;
+using ManagerApi.Helpers;
+using Microsoft.EntityFrameworkCore;
+
 namespace ManagerApi;
 
 public class Program
@@ -6,8 +11,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // Configurar DbContext usando la cadena de conexión "ManagerDatabase"
+        var connectionString = builder.Configuration.GetConnectionString("ManagerDatabase");
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(connectionString));
 
+        // Registrar servicios de contexto de usuario y auditoría
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<AuditInterceptor>();
+
+        // Add services to the container.
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
