@@ -4,6 +4,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagerApi", "Api\ManagerAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagerWeb", "Web\ManagerWeb\ManagerWeb.csproj", "{A0BE6FAD-460C-4F2A-9F72-2E7DFC7B1626}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentacion", "Documentacion", "{B77139A8-535D-4347-A24B-7FE58D372A91}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos_Version2.md = C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos_Version2.md
+		C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos_Version3.md = C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos_Version3.md
+		C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos.md = C:\Users\gmarr\Downloads\Documentacion_Seguidor_Proyectos.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
