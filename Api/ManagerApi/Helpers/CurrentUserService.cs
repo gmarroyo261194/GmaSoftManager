@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Linq;
 
 namespace ManagerApi.Helpers;
 
@@ -13,23 +14,41 @@ public class CurrentUserService : ICurrentUserService
 
     public Guid GetUserId()
     {
-        var httpContext = _httpContextAccessor.HttpContext;
-        if (httpContext == null || httpContext.User == null)
-            throw new Exception("No authenticated user.");
+        var httpContext = _httpContextAccessor?.HttpContext;
+        if (httpContext == null)
+            throw new System.Exception("HttpContext is not available.");
 
-        // Suponiendo que el claim principal del id de usuario está en JwtRegisteredClaimNames.Sub o en un custom claim "userId".
-        var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier) // Standard claim
-                          ?? httpContext.User.FindFirst(ClaimTypes.Name)         // Sometimes used
-                          ?? httpContext.User.FindFirst("sub")                   // JWT registered claim
-                          ?? httpContext.User.FindFirst("userId");               // Custom claim
+        var user = httpContext.User;
+        // Si no hay usuario o no está autenticado, devolver Guid.Empty.
+        // Esto permite flujos anónimos/intentos de crear el primer usuario sin fallar con excepción.
+        if (user == null || user.Identity?.IsAuthenticated != true)
+            return Guid.Empty;
 
-        if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
-            throw new Exception("UserId claim not found.");
+        // Intent: buscar entre varios nombres de claim comunes
+        var candidateClaimTypes = new[] {
+            "UserId",
+            System.Security.Claims.ClaimTypes.NameIdentifier,
+            "sub",
+            "user_id",
+            "id",
+            "uid"
+        };
 
-        // Si es un GUID, lo convertimos correctamente
-        if (Guid.TryParse(userIdClaim.Value, out Guid userId))
-            return userId;
-        
-        throw new Exception("UserId in claim is not a valid GUID.");
+        var claim = user.Claims.FirstOrDefault(c =>
+            candidateClaimTypes.Any(t => string.Equals(t, c.Type, StringComparison.OrdinalIgnoreCase)));
+
+        if (claim == null)
+        {
+            var available = user.Claims.Select(c => c.Type).Distinct();
+            var availableList = string.Join(", ", available);
+            throw new System.Exception($"UserId claim not found. Buscados: {string.Join(", ", candidateClaimTypes)}. Claims presentes: {availableList}.");
+        }
+
+        if (!Guid.TryParse(claim.Value, out var userId))
+        {
+            throw new System.Exception($"UserId claim value tiene un formato inválido para GUID. ClaimType='{claim.Type}', Value='{claim.Value}'. Asegúrate de que el token incluya un GUID o adapta el parseo.");
+        }
+
+        return userId;
     }
 }

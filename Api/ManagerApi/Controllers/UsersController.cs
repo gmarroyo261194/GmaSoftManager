@@ -57,6 +57,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto model)
     {
         if (await _context.Users.AnyAsync(u => u.Email == model.Email))
