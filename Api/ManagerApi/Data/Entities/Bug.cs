@@ -17,9 +17,6 @@ public class Bug: AuditEntity
     [Required, StringLength(20)]
     public string Severity { get; set; } // Baja, Media, Alta, Crítica
 
-    [Required]
-    public Guid CreatedById { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Guid? AssignedToId { get; set; }
     public Guid? FixedInTaskId { get; set; }
 

@@ -13,8 +13,7 @@ public class ProjectTask : AuditEntity
     public string Title { get; set; }
     [StringLength(1000)]
     public string Description { get; set; }
-    [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    
     [Required]
     public DateTime DueDate { get; set; }
     [Required, StringLength(30)]
